@@ -13,16 +13,20 @@ validre = 'mul\(\d+,\d+\)'
 for line in f.readlines():
     print("=== New Line ===")
     # print("line %s" % line)
-    splitLines = line.split("don't()")
+    splitLines = line.split("do()")
     validLines = []
-    validLines.append(splitLines[0])
-    for line in splitLines[1:]:
-        print("Analyzing %s\n\n" % line)
-        if ('do()' in line):
-            validLine = line.split('do()')[1:]
-            for l in validLine:
-                 validLines.append(l)
-                 print("Appending %s \n\n" % l)
+    # validLines.append(splitLines[0])
+    for line in splitLines:
+        validLine = ''
+        # print("Analyzing %s\n\n" % line)
+        if ("don't()" in line):
+            validLine = line.split("don't()")[0]
+            # print("Appending %s \n\n" % validLine)
+            validLines.append(validLine)
+        else:
+            # print("No don'ts found in this line %s" % line)
+            validLines.append(line)
+
 
     for line in validLines:
         l1 = re.findall(validre, line)

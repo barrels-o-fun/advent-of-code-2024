@@ -1,0 +1,11 @@
+Part 1:
+196826776 - Correct 1st Time
+
+Part 2:
+101509244 - Too low
+106780429 - I joined all the lines into one file for the data
+114961848
+114961848 - Too high :-D
+119002756
+
+154535564
