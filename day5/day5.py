@@ -6,7 +6,9 @@ file = sys.argv[1]
 f = open(file).readlines()
 rules = [] # Tuples (assuming rules are only ever 2 ints) stored as Ints
 updates = [] # List of lists stored as Ints
+GoodUpdates = [] # List of Good Updates (added to as we find them)
 
+# Read in rules and updates separately
 for line in f:
     if '|' in line:
         a, b = line.rstrip().split('|')
@@ -22,8 +24,6 @@ print("Rules: ", rules)
 print("Updates: ", updates)
 
 # We want to know which of the "Pages" match the rules
-
-GoodUpdates = []
 
 def is_a_first (a, b, numList):
     target = b
@@ -42,6 +42,8 @@ def is_a_first (a, b, numList):
             found_target = True
     return True
 
+# I feel like  this could be clearer, feels a bit messy...
+# Would also be nice to have a single "is_x_first" function...
 def is_b_first (a, b, numList):
     target = a
     found_b = False
@@ -51,7 +53,7 @@ def is_b_first (a, b, numList):
             found_b = True
         elif num == target:
             found_target = True
-        # if we get to 'a' first, we need to keep checking
+        # if we get to 'b' first, we need to keep checking
         if found_b == True:
             continue
         # if get to target first this is BAD and we can break out
@@ -90,9 +92,11 @@ for update in updates:
         GoodUpdates.append(update)
 
 part1Total = 0
+
 for update in GoodUpdates:
+    # Check the "middle" page to produce our total
+    # length + 1 gives "human" length of list, div 2, then -1 to go back to index
     part1Total += update[int((len(update) + 1) / 2) - 1]
 
 print("Part1 Total: ", part1Total)
 
-# And then know the "middle" page to produce our total
