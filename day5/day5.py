@@ -135,11 +135,11 @@ print("BadUpdates: ", BadUpdates)
 
 finalFixedUpdates = []
 unFixedUpdates = BadUpdates
+
 while (len(unFixedUpdates) > 0):
     fixedUpdates, unFixedUpdates = processUpdates(unFixedUpdates, fixupdates=True)
     for fixed in fixedUpdates:
         finalFixedUpdates.append(fixed)
-    # print("fixedUpdates: ", fixedUpdates)
     print("unFixedUpdates: ", len(unFixedUpdates))
     # time.sleep(1)
 
