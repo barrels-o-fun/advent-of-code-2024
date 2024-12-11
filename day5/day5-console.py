@@ -1,12 +1,8 @@
 #!/usr/bin/python3
 
-import tkinter as tk
-from random import random
-
 import sys
 import time
 file = sys.argv[1]
-# file = 'sampleData.txt'
 
 f = open(file).readlines()
 rules = [] # Tuples (assuming rules are only ever 2 ints) stored as Ints
@@ -26,55 +22,10 @@ for line in f:
             l1.append(int(num))
         updates.append(l1)
 
-# print("Rules: ", rules)
-# print("Updates: ", updates)
+print("Rules: ", rules)
+print("Updates: ", updates)
 
 # We want to know which of the "Pages" match the rules
-width = 2
-blank = '     '
-
-tk_grid_col_width = 75
-tk_grid_row_height = 75
-X_OFFSET = 128
-
-def build_empty_grid():
-    grid = [[blank,] * width,
-           [blank,] * width
-           ]
-    return grid
-
-def update_board(grid, value):
-    bg_color = 'white'
-    text_color = 'black'
-    y_offset = 0
-    for row in grid:
-        for cnt, piece in enumerate(row):
-            if (False):
-                continue
-            else:
-                icon = value
-            w = tk.Label(root, text= icon, bg = bg_color, fg = text_color)
-            w.place(x = 0 + (cnt * tk_grid_col_width ) + X_OFFSET, y = 0 + y_offset, width = tk_grid_col_width, height = tk_grid_row_height)
-            if bg_color == 'white':
-                bg_color = 'black'
-                text_color = 'white'
-            else:
-                bg_color = 'white'
-                text_color = 'black'
-        if bg_color == 'white':
-            bg_color = 'black'
-            text_color = 'white'
-        else:
-            bg_color = 'white'
-            text_color = 'black'    
-        y_offset += tk_grid_row_height
-
-
-
-# Main starts here
-
-
-
 
 def is_a_first (a, b, numList):
     target = b
@@ -176,87 +127,34 @@ def processUpdates(updates, fixupdates = False):
 
     return GoodUpdates, BadUpdates
 
-
-#Main starts here
-
-
-
-root = tk.Tk()
-
-grid = build_empty_grid()    
-
-# field = tk.Canvas(root, width=220,height=220)
-board_frame = tk.Frame(root, width=800, height=600)
-board_frame.pack()
-# field.pack()
-update_board(grid, 0)
 part1Total = 0
 part2Total = 0
 
-finish = False
-fixingUpdates = False
+GoodUpdates, BadUpdates = processUpdates(updates)
+print("BadUpdates: ", BadUpdates)
+
 finalFixedUpdates = []
+unFixedUpdates = BadUpdates
 
-def run_game (part1Total, part2Total, updates):
-   
+while (len(unFixedUpdates) > 0):
+    fixedUpdates, unFixedUpdates = processUpdates(unFixedUpdates, fixupdates=True)
+    for fixed in fixedUpdates:
+        finalFixedUpdates.append(fixed)
+    print("unFixedUpdates: ", len(unFixedUpdates))
+    # time.sleep(1)
 
-        if(fixingUpdates == False):
-            GoodUpdates, BadUpdates = processUpdates(updates)
-            print("BadUpdates: ", BadUpdates)
+# for update in BadUpdates:
+#     print("Still wrong: ", update)
 
-            unFixedUpdates = BadUpdates
-            update_board(grid, len(unFixedUpdates))
-            return True, unFixedUpdates
+for update in GoodUpdates:
+    # Check the "middle" page to produce our total
+    # length + 1 gives "human" length of list, div 2, then -1 to go back to index
+    part1Total += update[int((len(update) + 1) / 2) - 1]
 
-        else:
-            if (len(unFixedUpdates) > 0):
-                fixedUpdates, unFixedUpdates = processUpdates(unFixedUpdates, fixupdates=True)
-                for fixed in fixedUpdates:
-                    finalFixedUpdates.append(fixed)
-                print("unFixedUpdates: ", len(unFixedUpdates))
-                update_board(grid, len(unFixedUpdates))
-                # time.sleep(1)
-            else:
-                return False, unFixedUpdates
-
-        # for update in BadUpdates:
-        #     print("Still wrong: ", update)
-
-        for update in GoodUpdates:
-            # Check the "middle" page to produce our total
-            # length + 1 gives "human" length of list, div 2, then -1 to go back to index
-            part1Total += update[int((len(update) + 1) / 2) - 1]
-
-        for update in finalFixedUpdates:
-            part2Total += update[int((len(update) + 1) / 2) - 1]
+for update in finalFixedUpdates:
+    part2Total += update[int((len(update) + 1) / 2) - 1]
 
 
+print("Part 1 Total: ", part1Total)
+print("Part 2 Total: ", part2Total)
 
-
-while (finish == False):
-    finish, unFixedUpdates = run_game(part1Total, part2Total, updates)
-    root.update()
-
-tk.mainloop()
-    
-    # print("Part 1 Total: ", part1Total)
-    # print("Part 2 Total: ", part2Total)
-
-    
-
-
-    # button = tk.Button(
-    # master=root,
-    # text="Click me!",
-    # width=25,
-    # height=5,
-    # bg="blue",
-    # fg="yellow",
-    # command = lambda : build_empty_grid()
-    # )
-    # button.pack()
-    # next_button = tk.Button(root, text="Next Iteration", command=lambda : run_and_canvas(board, field))
-    # next_button.pack()
-    # init_button = tk.Button(root, text="New Initialization", command=lambda : random_init(board, field))
-    # init_button.pack()
-    # tk.mainloop()
