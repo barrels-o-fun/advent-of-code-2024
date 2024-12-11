@@ -5,8 +5,8 @@ from random import random
 
 import sys
 import time
-file = sys.argv[1]
-# file = 'sampleData.txt'
+# file = sys.argv[1]
+file = 'sampleData.txt'
 
 f = open(file).readlines()
 rules = [] # Tuples (assuming rules are only ever 2 ints) stored as Ints
@@ -30,15 +30,16 @@ for line in f:
 # print("Updates: ", updates)
 
 # We want to know which of the "Pages" match the rules
-width = 1
+width = 2
 blank = '     '
 
-tk_grid_col_width = 30
-tk_grid_row_height = 30
+tk_grid_col_width = 75
+tk_grid_row_height = 75
 X_OFFSET = 128
 
 def build_empty_grid():
-    grid = [[blank,] * width,           
+    grid = [[blank,] * width,
+           [blank,] * width
            ]
     return grid
 
@@ -46,8 +47,6 @@ def update_board(grid, value):
     bg_color = 'white'
     text_color = 'black'
     y_offset = 0
-    w = tk.Label(root, text = "Unfixed: ", bg = bg_color, fg = text_color)
-    w.place(x=0, y=0 + y_offset, width = 200)
     for row in grid:
         for cnt, piece in enumerate(row):
             if (False):
@@ -56,6 +55,18 @@ def update_board(grid, value):
                 icon = value
             w = tk.Label(root, text= icon, bg = bg_color, fg = text_color)
             w.place(x = 0 + (cnt * tk_grid_col_width ) + X_OFFSET, y = 0 + y_offset, width = tk_grid_col_width, height = tk_grid_row_height)
+            if bg_color == 'white':
+                bg_color = 'black'
+                text_color = 'white'
+            else:
+                bg_color = 'white'
+                text_color = 'black'
+        if bg_color == 'white':
+            bg_color = 'black'
+            text_color = 'white'
+        else:
+            bg_color = 'white'
+            text_color = 'black'    
         y_offset += tk_grid_row_height
 
 
@@ -175,7 +186,7 @@ root = tk.Tk()
 grid = build_empty_grid()    
 
 # field = tk.Canvas(root, width=220,height=220)
-board_frame = tk.Frame(root, width=400, height=300)
+board_frame = tk.Frame(root, width=800, height=600)
 board_frame.pack()
 # field.pack()
 update_board(grid, 0)
@@ -186,27 +197,49 @@ finish = False
 fixingUpdates = False
 finalFixedUpdates = []
 
-GoodUpdates, BadUpdates = processUpdates(updates)
-print("BadUpdates: ", BadUpdates)
+def run_game (part1Total, part2Total, updates, unFixedUpdates, fixingUpdates):
+   
 
-finalFixedUpdates = []
-unFixedUpdates = BadUpdates
+        if(fixingUpdates == False):
+            GoodUpdates, BadUpdates = processUpdates(updates)
+            print("BadUpdates: ", BadUpdates)
 
-while (len(unFixedUpdates) > 0):
-    fixedUpdates, unFixedUpdates = processUpdates(unFixedUpdates, fixupdates=True)
-    for fixed in fixedUpdates:
-        finalFixedUpdates.append(fixed)
-    print("unFixedUpdates: ", len(unFixedUpdates))
-    update_board(grid, len(unFixedUpdates))
+            unFixedUpdates = BadUpdates
+            fixingUpdates = True
+            update_board(grid, len(unFixedUpdates))
+            return False, unFixedUpdates
+    
+
+        else:
+            if (len(unFixedUpdates) > 0):
+                fixedUpdates, unFixedUpdates = processUpdates(unFixedUpdates, fixupdates=True)
+                for fixed in fixedUpdates:
+                    finalFixedUpdates.append(fixed)
+                print("unFixedUpdates: ", len(unFixedUpdates))
+                update_board(grid, len(unFixedUpdates))
+                # time.sleep(1)
+            else:
+                return False, unFixedUpdates
+
+        # for update in BadUpdates:
+        #     print("Still wrong: ", update)
+
+        for update in GoodUpdates:
+            # Check the "middle" page to produce our total
+            # length + 1 gives "human" length of list, div 2, then -1 to go back to index
+            part1Total += update[int((len(update) + 1) / 2) - 1]
+
+        for update in finalFixedUpdates:
+            part2Total += update[int((len(update) + 1) / 2) - 1]
+
+
+
+unFixedUpdates = []
+while (finish == False):
+    print("Beginning")
+    finish, unFixedUpdates = run_game(part1Total, part2Total, updates, unFixedUpdates, fixingUpdates)
+    print("Here now")
     root.update()
-    # time.sleep(1)
-
-for update in finalFixedUpdates:
-    part2Total += update[int((len(update) + 1) / 2) - 1]
-
-update_board(grid, part2Total)
-root.update()
-
 
 tk.mainloop()
     
