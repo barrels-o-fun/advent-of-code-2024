@@ -1,3 +1,7 @@
 part 1:
 Too low - 4981
 Too high - 5005
+
+
+part 2:
+1624 - Too low
