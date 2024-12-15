@@ -5,3 +5,5 @@ Too high - 5005
 
 part 2:
 1624 - Too low
+1668 - Too high
+1667 - Too high (I removed the guard's original pos)

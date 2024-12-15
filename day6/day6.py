@@ -44,8 +44,8 @@ def set_state(initialState):
         thirdArr = []
         for char in line.rstrip():
             mainArr.append(char)
-            secondArr.append(' ')
-            thirdArr.append(' ')
+            secondArr.append('.')
+            thirdArr.append('.')
         grid_start.append(mainArr)
         grid_record_walked.append(secondArr)
         grid_obstacles.append(thirdArr)
@@ -54,7 +54,7 @@ def set_state(initialState):
 def clear_grid(grid):
     for i, col in enumerate(grid):
         for j, row in enumerate(col):
-            grid[j][i] = ' '
+            grid[j][i] = '.'
     return grid
 
 def reset_grid_state(grid, initialState):
@@ -67,6 +67,7 @@ def reset_grid_state(grid, initialState):
     return grid
 
 def print_grid(grid):
+    print("DEBUG - Printing Grid")
     for line in grid:
         printMe = ''
         for char in line:
@@ -74,31 +75,31 @@ def print_grid(grid):
         print(printMe)
 
 # simple function to update grid on demand (b/w)
-def update_grid(grid, offset_plus):
-    bg_color = 'white'
-    text_color = 'black'
-    y_offset = 0
-    for row in grid:
-        for cnt, piece in enumerate(row):
-            if (False):
-                continue
-            else:
-                icon = piece
-            w = tk.Label(root, text= icon, bg = bg_color, fg = text_color)
-            w.place(x = 0 + (cnt * tk_grid_col_width ) + X_OFFSET + offset_plus, y = 0 + y_offset, width = tk_grid_col_width, height = tk_grid_row_height)
-            if bg_color == 'white':
-                bg_color = 'black'
-                text_color = 'white'
-            else:
-                bg_color = 'white'
-                text_color = 'black'
-        if bg_color == 'white':
-            bg_color = 'black'
-            text_color = 'white'
-        else:
-            bg_color = 'white'
-            text_color = 'black'    
-        y_offset += tk_grid_row_height
+# def update_grid(grid, offset_plus):
+#     bg_color = 'white'
+#     text_color = 'black'
+#     y_offset = 0
+#     for row in grid:
+#         for cnt, piece in enumerate(row):
+#             if (False):
+#                 continue
+#             else:
+#                 icon = piece
+#             w = tk.Label(root, text= icon, bg = bg_color, fg = text_color)
+#             w.place(x = 0 + (cnt * tk_grid_col_width ) + X_OFFSET + offset_plus, y = 0 + y_offset, width = tk_grid_col_width, height = tk_grid_row_height)
+#             if bg_color == 'white':
+#                 bg_color = 'black'
+#                 text_color = 'white'
+#             else:
+#                 bg_color = 'white'
+#                 text_color = 'black'
+#         if bg_color == 'white':
+#             bg_color = 'black'
+#             text_color = 'white'
+#         else:
+#             bg_color = 'white'
+#             text_color = 'black'    
+#         y_offset += tk_grid_row_height
 
 # find player char
 def find_guard(grid):
@@ -134,10 +135,13 @@ def move_guard(grid, grid_record_walked, grid_obstacles, guard_pos, guard_char, 
        if grid[new_y][new_x] == '#':
            grid_record_walked[new_y][new_x] = '#'
            grid_obstacles[new_y][new_x] = '#'
-           check = True
+        #    check = True
+       elif grid[new_y][new_x] == 'O':
+           grid_record_walked[new_y][new_x] = 'O'
+
 
     except IndexError:
-        print("Near OOB: ", new_y, new_x)
+        # print("Near OOB: ", new_y, new_x)
         return 1, grid, grid_record_walked, grid_obstacles, (new_y, new_x), guard_char, visited_tiles, visit_plus_dir
         
 
@@ -168,25 +172,24 @@ def move_guard(grid, grid_record_walked, grid_obstacles, guard_pos, guard_char, 
         new_y = y
 
         
-    else:
-        try:
-            grid[y][x] = '.'
-            grid[new_y][new_x]  = guard_char
+    try:
+        grid[y][x] = '.'
+        grid[new_y][new_x]  = guard_char
 
-            if populate_obstacles == True:
-                if guard_char == '^':
-                    grid_obstacles[new_y - 1][new_x] = 'O'
-                elif guard_char == '>':
-                    grid_obstacles[new_y][new_x + 1] = 'O'
-                elif guard_char == 'V':
-                    grid_obstacles[new_y + 1][new_x] = 'O'
-                elif guard_char == '<':
-                    grid_obstacles[new_y][new_x - 1] = 'O'
-                else:
-                    print("Shouldn't get here")
-                    exit
-        except IndexError:
-            print("It's ok")
+        if populate_obstacles == True:
+            if guard_char == '^':
+                grid_obstacles[new_y - 1][new_x] = 'O'
+            elif guard_char == '>':
+                grid_obstacles[new_y][new_x + 1] = 'O'
+            elif guard_char == 'V':
+                grid_obstacles[new_y + 1][new_x] = 'O'
+            elif guard_char == '<':
+                grid_obstacles[new_y][new_x - 1] = 'O'
+            else:
+                print("Shouldn't get here")
+                exit
+    except IndexError:
+        print("It's ok")
         
     
     return 0, grid, grid_record_walked, grid_obstacles, (new_y, new_x), guard_char, visited_tiles, visit_plus_dir
@@ -224,27 +227,28 @@ def run_game(grid_start, grid_record_walked, grid_obstacles, guard_pos, guard_ch
     # print("Visited: ", visited_tiles, visit_plus_dir)
     return 0, grid_start, grid_obstacles
 
-#
-#  Main  starts here
-#
+#######################
+#  Main  starts here  #
+#######################
 
-file = sys.argv[1]
+# Only needed, if using TK
+# tk_grid_col_width = 15
+# tk_grid_row_height = 15
+# X_OFFSET = 20
 
-tk_grid_col_width = 15
-tk_grid_row_height = 15
-X_OFFSET = 20
+# root = tk.Tk()
+# board_frame = tk.Frame(root, width=600, height=400)
+# board_frame.pack()
 
-root = tk.Tk()
-board_frame = tk.Frame(root, width=600, height=400)
-board_frame.pack()
+input_file = sys.argv[1]
 
-# Summary
+# Flow
 # Reset game start to start
 # Add additional (O)bstacle
 # Run Game
 # Repeat
 
-initialState = open(file).readlines()
+initialState = open(input_file).readlines()
 # initialState = test_grid
 print("InitalState: ", initialState)
 
@@ -267,8 +271,8 @@ bad_game = 0
 good_game = 0
 oob_game = 0
 
-update_grid(grid_start, 0)
-update_grid(grid_record_walked, 256)
+# update_grid(grid_start, 0)
+# update_grid(grid_record_walked, 256)
 
 result, grid_start, grid_obstacles = run_game(grid_start, grid_record_walked, grid_obstacles, guard_pos, guard_char, visited_tiles, populate_obstacles = True)
 
@@ -314,6 +318,10 @@ for i, row in enumerate(grid_obstacles):
                 # print("== DEBUG game returned state: 2", "Grid pos:", j, i, "Char: ", grid_obstacles[j][i])
                 # print_grid(grid_start)
                 good_game += 1
+                
+                
+                
+                print_grid(grid_record_walked)
         else:
             continue
     
@@ -323,7 +331,7 @@ for i, row in enumerate(grid_obstacles):
 
 print("Grid area : ", len(grid_start) * len(grid_start[0]))
 print("Total Games: ", grid_count)
-print("Good: ", good_game, "Bad: ", bad_game, "OOB: ", oob_game)
+print("Guard blocked:", good_game, ", Guard escapted:", bad_game, ", OOB:", oob_game)
 
             
             
