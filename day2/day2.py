@@ -73,6 +73,7 @@ for line in f.readlines():
             unSafeTotal +=1
             if debug: 
                print("Declared UnSafe")
+            print("report: ", checkLine)
         else:
             safeTotal += 1
 
